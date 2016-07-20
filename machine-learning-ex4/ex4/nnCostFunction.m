@@ -22,7 +22,7 @@ Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
 Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
                  num_labels, (hidden_layer_size + 1));
 
-% Setup some useful variables
+% Setup some useful variables,XµÄÐÐÊý
 m = size(X, 1);
          
 % You need to return the following variables correctly 
@@ -61,24 +61,41 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+a1 = [ones(m,1), X];
+z2 = a1 * Theta1';
+a2 = sigmoid(a1 * Theta1');
+a2 = [ones(m,1), a2];
+z3 = a2 * Theta2';
+h = sigmoid(a2 * Theta2');
 
+Y = zeros(m, num_labels);  
+for i = 1:m,  
+    Y(i,y(i)) = 1;  
+end;
+cost = -Y .* log(h)-(1-Y) .* log(1-h);
 
+%cost Function
+J = (1/m) * sum(cost(:));  
 
+%Regularized cost function
+J = J + (lambda/2/m) * (sum(sum(Theta1(:,2:end).^2)) + sum(sum(Theta2(:,2:end).^2)));
 
+%Backpropagation
+ %Part 2
+Delta1 = 0;
+Delta2 = 0;
+for i=1:m,
+   d3 = h(i,:)-Y(i,:); %[1 10]
+   d2 = (d3*Theta2(:,2:end)).*sigmoidGradient(z2(i,:)); %[1 25]    
+   Delta1 = Delta1 + (d2'*a1(i,:));%[25 401]
+   Delta2 = Delta2 + (d3'*a2(i,:));%[10 26]  
+ end;
 
+Theta1_grad = (1/m)*Delta1;
+Theta2_grad = (1/m)*Delta2;
 
-
-
-
-
-
-
-
-
-
-
-
-
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + ((lambda/m)*Theta1(:,2:end));
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + ((lambda/m)*Theta2(:,2:end));
 
 % -------------------------------------------------------------
 
@@ -87,5 +104,5 @@ Theta2_grad = zeros(size(Theta2));
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
 
-
+ 
 end

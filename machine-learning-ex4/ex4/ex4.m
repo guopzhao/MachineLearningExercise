@@ -120,12 +120,12 @@ fprintf('Program paused. Press enter to continue.\n');
 pause;
 
 
-%% ================ Part 6: Initializing Pameters ================
+%% ======== ======== Part 6: Initializing Pameters ================
 %  In this part of the exercise, you will be starting to implment a two
 %  layer neural network that classifies digits. You will start by
 %  implementing a function to initialize the weights of the neural network
 %  (randInitializeWeights.m)
-
+  
 fprintf('\nInitializing Neural Network Parameters ...\n')
 
 initial_Theta1 = randInitializeWeights(input_layer_size, hidden_layer_size);
